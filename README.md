@@ -1,2 +1,2 @@
-# Classe_Telefono-Ereditariet-.
-Compito in 'c++' della classe Telefono e  le sue 'sub class'
+# Class phone Homeworck cpp.
+How link classes in cpp with simple program.
