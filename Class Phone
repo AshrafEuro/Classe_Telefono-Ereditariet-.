@@ -1,0 +1,225 @@
+#include <iostream>
+using namespace std;
+
+class Batteria
+{
+private:
+    int capacita; // mAh
+    int livello_di_carica; // percentuale 0–100
+
+public:
+    Batteria()
+    {
+        capacita = 3000;
+        livello_di_carica = 100;
+    }
+
+    Batteria(int c , int lv_carica)
+    {
+        capacita = c;
+        livello_di_carica = lv_carica;
+    }
+
+    int getCapacita() const { return capacita; }
+    int getLivelloCarica() const { return livello_di_carica; }
+
+    void setCapacita(int c)
+    {
+        if (c > 0)
+            capacita = c;
+        else
+            cout << "Errore: capacità non valida!" << endl;
+    }
+
+    void setLivelloCarica(int lv)
+    {
+        if (lv >= 0 && lv <= 100)
+            livello_di_carica = lv;
+        else
+            cout << "Errore: livello di carica deve essere tra 0 e 100!" << endl;
+    }
+};
+
+
+class Sim
+{
+private:
+    string numero;
+    int credito;
+
+public:
+    Sim()
+    {
+        numero = "2297485000";
+        credito = 10;
+    }
+
+    Sim(string num, int cred)
+    {
+        numero = num;
+        credito = cred;
+    }
+
+    string getNumero() { return numero; }
+    int getCredito() { return credito; }
+
+    void setNumero(string n)
+    {
+        if(n.length() != 10)
+            cout << "Numero non valido (deve avere 10 cifre).\n";
+        else
+            numero = n;
+    }
+
+    void setCredito(int c)
+    {
+        if (c < 0)
+            cout << "Credito non può essere negativo!\n";
+        else
+            credito = c;
+    }
+};
+
+
+class Telefono
+{
+private:
+    string marca;
+    string modello;
+    Batteria bat;
+    Sim tel_sim;
+
+public:
+    Telefono(string m, string mod)
+    {
+        marca = m;
+        modello = mod;
+    }
+
+    bool telefonata(int minuti, string tel_destinatario)
+    {
+        if (bat.getLivelloCarica() == 0)
+        {
+            cout << "Telefono scarico!" << endl;
+            return false;
+        }
+        else if (tel_sim.getCredito() == 0)
+        {
+            cout << "Credito esaurito!" << endl;
+            return false;
+        }
+
+        cout << "Sei in chiamata con " << tel_destinatario 
+             << " per " << minuti << " minuti.\n";
+        return true;
+    }
+
+    bool invio_sms(string tel_destinatario, string testo)
+    {
+        if (bat.getLivelloCarica() == 0)
+        {
+            cout << "Telefono scarico!\n";
+            return false;
+        }
+        else if (tel_sim.getCredito() == 0)
+        {
+            cout << "Credito Finito!\n";
+            return false;
+        }
+
+        if (tel_destinatario.length() != 10)
+        {
+            cout << "Numero non valido!\n";
+            return false;
+        }
+
+        cout << "SMS inviato a: " << tel_destinatario 
+             << "\nTesto: " << testo << "\n";
+        return true;
+    }
+
+    bool caricaCredito(int carica)
+    {
+        if (carica <= 0)
+            return false;
+
+        int nuovo_credito = tel_sim.getCredito() + carica;
+        tel_sim.setCredito(nuovo_credito);
+
+        return true;
+    }
+};
+
+
+
+int main()
+{
+    int scelta;
+    Telefono mioTelefono("Samsung", "Galaxy S21");
+
+    do
+    {
+        cout << "\n--- MENU ---\n";
+        cout << "1. Effettua una telefonata\n";
+        cout << "2. Invia un SMS\n";
+        cout << "3. Carica credito\n";
+        cout << "4. Esci\n";
+        cout << "Scelta: ";
+        cin >> scelta;
+
+        switch (scelta)
+        {
+            case 1:
+            {
+                int minuti;
+                string numero;
+
+                cout << "Inserisci numero destinatario: ";
+                cin >> numero;
+
+                cout << "Minuti di telefonata: ";
+                cin >> minuti;
+
+                mioTelefono.telefonata(minuti, numero);
+                break;
+            }
+
+            case 2:
+            {
+                string numero, testo;
+
+                cout << "Inserisci numero destinatario: ";
+                cin >> numero;
+
+                cout << "Scrivi il testo dell’SMS: ";
+
+                mioTelefono.invio_sms(numero, testo);
+                break;
+            }
+
+            case 3:
+            {
+                int importo;
+                cout << "Quanto vuoi ricaricare? ";
+                cin >> importo;
+
+                if (mioTelefono.caricaCredito(importo))
+                    cout << "Ricarica effettuata!\n";
+                else
+                    cout << "Importo non valido.\n";
+                break;
+            }
+
+            case 4:
+                cout << "Uscita dal programma." << endl;
+                break;
+
+            default:
+                cout << "Scelta non valida!" << endl;
+                break;
+        }
+
+    } while (scelta != 4);
+
+    return 0;
+}
